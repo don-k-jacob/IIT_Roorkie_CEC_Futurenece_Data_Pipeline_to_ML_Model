@@ -1,0 +1,16 @@
+order_id,order_ts,customer_id,store_id,product_id,quantity,unit_price,discount_pct,order_amount,payment_mode,order_status,channel,delivery_minutes,failure_reason
+ORD000822,2026-09-11 22:25:24,C00152,S02,P0060,1,531.0,0,531.0,UPI,RETURNED,App,28,product_id_in_master
+ORD002431,2026-10-01 06:04:00,C00100,S05,P0074,2,350.0,0,700.0,Card,DELIVERED,App,8,product_id_in_master
+ORD002483,2026-10-01 08:09:00,C00008,S11,P0074,1,350.0,5,332.5,Card,DELIVERED,App,19,product_id_in_master
+ORD002516,2026-10-01 11:36:00,C00288,S10,P0068,1,649.0,0,649.0,UPI,DELIVERED,App,23,product_id_in_master
+ORD002482,2026-10-01 11:58:00,C00066,S15,P0074,1,350.0,10,315.0,Cash on Delivery,DELIVERED,App,19,product_id_in_master
+ORD002491,2026-10-01 13:41:00,C00292,S15,P0073,2,279.0,5,530.1,Cash on Delivery,DELIVERED,App,8,product_id_in_master
+ORD002542,2026-10-01 15:59:00,C00234,S01,P0068,2,649.0,5,1233.1,Cash on Delivery,DELIVERED,App,11,product_id_in_master
+ORD002411,2026-10-01 16:25:00,C00323,S05,P0019,3,220.0,10,594.0,Card,DELIVERED,App,21,product_id_in_master
+ORD002526,2026-10-01 16:35:00,C00020,S01,P0074,3,350.0,10,945.0,Card,DELIVERED,App,19,product_id_in_master
+ORD002477,2026-10-01 16:57:00,C00321,S14,P0117,1,77.0,10,69.3,Cash on Delivery,DELIVERED,App,8,product_id_in_master
+ORD002486,2026-10-01 17:09:00,C00398,S08,P0026,2,205.0,10,369.0,Card,DELIVERED,App,26,customer_id_in_master
+ORD002465,2026-10-01 18:00:00,C00074,S02,P0109,3,203.0,5,578.55,Wallet,DELIVERED,App,17,product_id_in_master
+ORD002544,2026-10-01 19:03:00,C00219,S10,P0051,3,283.0,0,849.0,Cash on Delivery,DELIVERED,App,28,product_id_in_master
+ORD002443,2026-10-01 20:53:00,C00120,S15,P0117,3,77.0,5,219.45,Cash on Delivery,DELIVERED,App,12,product_id_in_master
+ORD002422,2026-10-01 21:29:00,C00131,S02,P0117,1,77.0,0,77.0,UPI,DELIVERED,App,9,product_id_in_master
