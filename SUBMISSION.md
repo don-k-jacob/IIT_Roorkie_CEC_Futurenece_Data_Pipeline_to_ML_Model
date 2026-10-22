@@ -112,7 +112,7 @@ Severity: **Critical** = quarantine the row. **Warning** = load the row, log the
 In Airflow: `astro dev start`, then trigger `nammamart_etl_yourname` and `nammamart_elt_yourname`.
 Without Airflow (same functions, same task order): `.venv/bin/python include/nammamart/run_local.py etl elt`.
 
-> **Status:** every number below comes from real runs of the pipeline code through `run_local.py`. The DAGs have not yet been run inside Airflow (Docker and the Astro CLI weren't installed in time), so the Airflow screenshots and the Airflow-only observations (task durations in the UI, retry states, Clear) are still to do. They are marked **⏳ Airflow** below.
+> **Status:** both DAGs load in Airflow with no import errors and have run **green** in Airflow (`astro dev start`): one manual run each plus the scheduled run stamped `scheduled__2026-10-22T03:30:00+00:00` (= 9:00 AM IST). The Airflow runs produced exactly the same numbers as the local runs (5,372 in, 295 quarantined, 2,315 orders, ₹11,29,076.45). The experiments were run through `run_local.py`, which calls the same functions. Still to add: screenshots and the Airflow-only observations (retry states, Clear), marked **⏳ Airflow** below.
 
 ## Part A: ETL pipeline
 
@@ -194,7 +194,7 @@ Excluding the 1 Oct orders whose payments haven't arrived yet, **₹2,06,414.85*
 Both DAGs: `schedule="0 9 * * 1-6"`, `start_date=pendulum.datetime(2026, 10, 1, tz="Asia/Kolkata")`, `catchup=False`, and `default_args` with `retries=2`, `retry_delay=2 min` and `execution_timeout=15 min`.
 
 - **Cron expression:** `0 9 * * 1-6`, minute 0, hour 9, Monday (1) to Saturday (6).
-- **Time in UTC in the Airflow UI:** 03:30 UTC (IST is UTC+5:30). ⏳ Airflow: screenshot of the next run time.
+- **Time in UTC in the Airflow UI:** 03:30 UTC (IST is UTC+5:30). Confirmed: Airflow created the run `scheduled__2026-10-22T03:30:00+00:00`.
 - **If `start_date` were left in UTC:** the cron would run at 09:00 UTC = **2:30 PM IST**, five hours after the 9:30 AM stand-up.
 - **If the laptop or Docker is off at 9 AM:** nothing runs and there is no data at 9:30. When Airflow starts again, `catchup=False` means it creates at most one run for the latest missed slot, not one per missed day. That's why this must run on an always-on host (Astro / a server), not a laptop, with an alert if `pipeline_runs` has no `success` row by 9:15.
 - **Why `catchup=False`:** each file is a full snapshot. Backfilling every weekday since 1 Oct would re-process the same files many times for no new information.
