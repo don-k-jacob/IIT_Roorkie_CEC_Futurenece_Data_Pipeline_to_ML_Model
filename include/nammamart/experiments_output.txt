@@ -6,10 +6,10 @@
 [extract] customers.csv: 405 rows, 10 columns
 [extract] orders.csv: 2412 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_46.456375.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_46.456375.csv
-[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_46.456375.csv
-[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_46.456375.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_46.456375.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_46.456375.csv
+[quarantine] 233 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_46.456375.csv
+[quarantine] 29 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_46.456375.csv
 [validate] 5212 rows in, 280 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
   Warning  Accuracy     stores.capacity_positive: 1/15
@@ -103,10 +103,10 @@
 [extract] customers.csv: 405 rows, 10 columns
 [extract] orders.csv: 2412 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_47.594314.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_47.594314.csv
-[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_47.594314.csv
-[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_47.594314.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_47.594314.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_47.594314.csv
+[quarantine] 233 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_47.594314.csv
+[quarantine] 29 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_47.594314.csv
 [validate] 5212 rows in, 280 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
   Warning  Accuracy     stores.capacity_positive: 1/15
@@ -201,11 +201,11 @@
 [extract] orders.csv: 2412 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
 [extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_48.583480.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_48.583480.csv
-[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_48.583480.csv
-[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_48.583480.csv
-[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 233 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 15 rows -> include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 29 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_48.583480.csv
 [validate] 5372 rows in, 295 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
   Warning  Accuracy     stores.capacity_positive: 1/15
@@ -309,11 +309,11 @@
 [extract] orders.csv: 2417 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
 [extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_49.606130.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_49.606130.csv
-[quarantine] 238 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_49.606130.csv
-[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_49.606130.csv
-[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 238 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 15 rows -> include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 29 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_49.606130.csv
 [validate] 5377 rows in, 300 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
   Warning  Accuracy     stores.capacity_positive: 1/15
@@ -443,11 +443,11 @@ ORD90005      FAIL                             order_ts_not_future
 [extract] orders.csv: 50 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
 [extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_50.857383.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_50.857383.csv
-[quarantine] 1 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_50.857383.csv
-[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_50.857383.csv
-[quarantine] 2172 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 1 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 15 rows -> include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 2172 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_50.857383.csv
 [volume] WARNING orders: 50 rows vs 2417 on the previous run (>90% drop)
 [validate] 3010 rows in, 2206 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
@@ -536,11 +536,11 @@ ORD90005      FAIL                             order_ts_not_future
 [extract] orders.csv: 2412 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
 [extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_51.801323.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_51.801323.csv
-[quarantine] 366 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_51.801323.csv
-[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_51.801323.csv
-[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 366 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 15 rows -> include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 29 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_51.801323.csv
 [validate] 5372 rows in, 428 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
   Warning  Accuracy     stores.capacity_positive: 1/15
@@ -645,12 +645,12 @@ ORD90005      FAIL                             order_ts_not_future
 [extract] orders.csv: 2412 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
 [extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_52.816710.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_52.816710.csv
 [freshness] WARNING orders: latest order_ts 2026-09-21 10:15:00 is more than 1 day before 2026-10-01
-[quarantine] 231 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_52.816710.csv
-[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_52.816710.csv
-[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 231 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 15 rows -> include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 29 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_52.816710.csv
 [validate] 5372 rows in, 293 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
   Warning  Accuracy     stores.capacity_positive: 1/15
@@ -755,11 +755,11 @@ ORD90005      FAIL                             order_ts_not_future
 [extract] orders.csv: 2412 rows, 13 columns
 [extract] payments.csv: 2228 rows, 7 columns
 [extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
-[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_53.783513.csv
-[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_53.783513.csv
-[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_53.783513.csv
-[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_53.783513.csv
-[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 10 rows -> include/quarantine/yourname/products_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 8 rows -> include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 233 rows -> include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 15 rows -> include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 29 rows -> include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_53.783513.csv
 [validate] 5372 rows in, 295 quarantined. Checks with failures:
   Warning  Completeness stores.zone_not_null: 1/15
   Warning  Accuracy     stores.capacity_positive: 1/15
