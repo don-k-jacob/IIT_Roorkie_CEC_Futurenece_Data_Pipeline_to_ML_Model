@@ -18,3 +18,4 @@ test_api.py
 include/warehouse_*.duckdb
 include/warehouse_*.duckdb.wal
 include/tmp/
+.playwright-mcp/

@@ -112,7 +112,7 @@ Severity: **Critical** = quarantine the row. **Warning** = load the row, log the
 In Airflow: `astro dev start`, then trigger `nammamart_etl_yourname` and `nammamart_elt_yourname`.
 Without Airflow (same functions, same task order): `.venv/bin/python include/nammamart/run_local.py etl elt`.
 
-> **Status:** both DAGs load in Airflow with no import errors and have run **green** in Airflow (`astro dev start`): one manual run each plus the scheduled run stamped `scheduled__2026-10-22T03:30:00+00:00` (= 9:00 AM IST). The Airflow runs produced exactly the same numbers as the local runs (5,372 in, 295 quarantined, 2,315 orders, ₹11,29,076.45). The experiments were run through `run_local.py`, which calls the same functions. Still to add: screenshots and the Airflow-only observations (retry states, Clear), marked **⏳ Airflow** below.
+> **Status:** both DAGs load in Airflow with no import errors and have run **green** in Airflow (`astro dev start`): one manual run each plus the scheduled run stamped `scheduled__2026-10-22T03:30:00+00:00` (= 9:00 AM IST). The Airflow runs produced exactly the same numbers as the local runs (5,372 in, 295 quarantined, 2,315 orders, ₹11,29,076.45). The experiments were run through `run_local.py`, which calls the same functions. Screenshots are at the end of this file. Still to do: the Airflow-only observations for experiments 4 and 10 (retry states, Clear), marked **⏳ Airflow** below.
 
 ## Part A: ETL pipeline
 
@@ -296,9 +296,17 @@ Both pipelines produced the same answer on the same data: ₹11,29,076.45 net re
 2. **One DuckDB file on one machine, with one writer.** If the laptop is off at 9 AM there is no report. Move to an always-on host (Astro or a server) with backups and a "no success by 9:15" alert.
 3. **Strict master-data rules can silently hide real revenue.** 135 September orders were rejected because their product row was bad or missing (for example, P0109's negative MRP), and 18 because of future signup dates. Each rule needs an owner, and `dq_results` trends need an alert, so a bad master file doesn't quietly understate the 9 AM number.
 
-## Screenshots (⏳ to add after the first Airflow run)
+## Screenshots
 
-- [ ] Both DAGs in Graph view, green run
-- [ ] Schedule showing 9:00 AM IST / next run time
-- [ ] One quarantine file (already generated in `include/quarantine/yourname/`)
-- [ ] Query results: `dq_results`, `pipeline_runs`, the payment reconciliation table (already in [results.md](include/sql/business_questions/results.md))
+All taken from the Airflow runs on 22 Oct 2026 (`astro dev start`, UI timezone +05:30).
+
+| Checklist item | Screenshot |
+|---|---|
+| Schedule `0 9 * * 1-6`, latest runs green, next run 2026-10-23 09:00 IST | ![DAG list](screenshots/01_dags_list_schedule.png) |
+| ETL DAG, Graph view, green run (6 parallel extracts → validate → … → run_audit) | ![ETL graph](screenshots/02_etl_graph_green.png) |
+| ETL Grid view: the scheduled (03:30 UTC = 9:00 IST) and manual runs, every task green | ![ETL grid](screenshots/03_etl_grid_runs_green.png) |
+| ELT DAG, Graph view, green run (6 parallel raw loads → staging → merge → marts → audit) | ![ELT graph](screenshots/04_elt_graph_green.png) |
+| `pipeline_runs` query result | ![pipeline_runs](screenshots/05_pipeline_runs.png) |
+| `dq_results` query result (73 checks for the run; failing ones shown) | ![dq_results](screenshots/06_dq_results.png) |
+| Payment reconciliation tables, ETL vs ELT | ![reconciliation](screenshots/07_payment_reconciliation.png) |
+| A quarantine file with `failure_reason` | ![quarantine](screenshots/08_quarantine_orders.png) |
