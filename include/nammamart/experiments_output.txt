@@ -1,0 +1,855 @@
+
+
+######## 1 + 3a. Happy path WITHOUT the increment file ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 2412 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_46.456375.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_46.456375.csv
+[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_46.456375.csv
+[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_46.456375.csv
+[validate] 5212 rows in, 280 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Uniqueness   orders.order_id_unique: 12/2412
+  Critical Completeness orders.customer_id_not_null: 18/2412
+  Critical Consistency  orders.customer_id_in_master: 18/2412
+  Critical Consistency  orders.product_id_in_master: 135/2412
+  Critical Consistency  orders.store_id_in_master: 5/2412
+  Critical Completeness orders.order_ts_not_null: 2/2412
+  Critical Validity     orders.order_ts_valid_timestamp: 4/2412
+  Critical Timeliness   orders.order_ts_not_future: 7/2412
+  Critical Accuracy     orders.quantity_positive: 10/2412
+  Critical Validity     orders.discount_pct_0_to_100: 3/2412
+  Critical Accuracy     orders.order_amount_matches_formula: 18/2412
+  Critical Validity     orders.order_status_allowed: 3/2412
+  Critical Completeness orders.delivered_has_delivery_minutes: 8/2412
+  Critical Accuracy     orders.delivery_minutes_below_120: 6/2412
+  Warning  Consistency  orders.payment_mode_standard_format: 10/2412
+  Warning  Consistency  orders.order_status_upper_case: 5/2412
+  Warning  Accuracy     orders.delivery_minutes_8_to_35: 6/2412
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 8/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [2179]
+[load] upserted 2179 rows from orders.csv
+[load] etl_fact_orders now holds 2179 rows
+[reconcile] etl_payment_reconciliation:
+  payment_for_quarantined_order     206  ₹158,276.73
+  delivered_payment_failed           42  ₹25,722.25
+  delivered_no_payment               27  ₹16,438.30
+  amount_mismatch                    12  ₹585.00
+  payment_without_order               8  ₹4,580.57
+  returned_not_refunded               1  ₹812.00
+[report] net revenue by zone: [('East', 273415.95), ('West', 270878.6), ('South', 226467.3), ('North', 215968.05), ('Unassigned', 73818.05)]
+[report] category margin:
+   ('Staples', 246178.95, 183980.54, 62198.41, 25.3)
+   ('Personal Care', 199390.5, 155163.73, 44226.77, 22.2)
+   ('Household', 198202.35, 147354.26, 50848.09, 25.7)
+   ('Dairy & Bakery', 167733.65, 123318.19, 44415.46, 26.5)
+   ('Snacks & Beverages', 161761.95, 124069.0, 37692.95, 23.3)
+   ('Fruits & Vegetables', 87280.55, 66371.09, 20909.46, 24.0)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:46.456375: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'rows_extracted': 5212, 'rows_quarantined': 280, 'rows_loaded': 2179}
+[raw] stores.csv: 15 rows in file, 15 appended (new content); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 152 appended (new content); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 405 appended (new content); raw_customers now 405 rows
+[raw] orders.csv: 2412 rows in file, 2412 appended (new content); raw_orders now 2412 rows
+[raw] payments.csv: 2228 rows in file, 2228 appended (new content); raw_payments now 2228 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[stage] stg_orders: 2412 rows, 233 FAIL
+[merge] no increment file loaded yet
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 29 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 273415.95), ('West', 270878.6), ('South', 226467.3), ('North', 215968.05), ('Unassigned', 73818.05)]
+[marts] reconciliation: [('payment_for_quarantined_order', 206, 158276.73), ('delivered_payment_failed', 42, 25722.25), ('delivered_no_payment', 27, 16438.3), ('amount_mismatch', 12, 585.0), ('payment_without_order', 8, 4580.57), ('returned_not_refunded', 1, 812.0)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:46.885076: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'rows_quarantined_masters_orders': 251, 'rows_quarantined_increment': 0, 'rows_extracted': 5212, 'rows_quarantined': 280, 'rows_loaded': 2179, 'report_done': True}
+  -> ETL success, ELT success
+  counts: {'etl_fact_orders': 2179, 'etl_returned': 66, 'etl_revenue': 1060547.95, 'raw_orders': 2412, 'stg_orders_pass': 2179, 'elt_returned': 66, 'elt_revenue': 1060547.95}
+
+
+######## 2. Re-run the same files (idempotency) ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 2412 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_47.594314.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_47.594314.csv
+[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_47.594314.csv
+[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_47.594314.csv
+[validate] 5212 rows in, 280 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Uniqueness   orders.order_id_unique: 12/2412
+  Critical Completeness orders.customer_id_not_null: 18/2412
+  Critical Consistency  orders.customer_id_in_master: 18/2412
+  Critical Consistency  orders.product_id_in_master: 135/2412
+  Critical Consistency  orders.store_id_in_master: 5/2412
+  Critical Completeness orders.order_ts_not_null: 2/2412
+  Critical Validity     orders.order_ts_valid_timestamp: 4/2412
+  Critical Timeliness   orders.order_ts_not_future: 7/2412
+  Critical Accuracy     orders.quantity_positive: 10/2412
+  Critical Validity     orders.discount_pct_0_to_100: 3/2412
+  Critical Accuracy     orders.order_amount_matches_formula: 18/2412
+  Critical Validity     orders.order_status_allowed: 3/2412
+  Critical Completeness orders.delivered_has_delivery_minutes: 8/2412
+  Critical Accuracy     orders.delivery_minutes_below_120: 6/2412
+  Warning  Consistency  orders.payment_mode_standard_format: 10/2412
+  Warning  Consistency  orders.order_status_upper_case: 5/2412
+  Warning  Accuracy     orders.delivery_minutes_8_to_35: 6/2412
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 8/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [2179]
+[load] upserted 2179 rows from orders.csv
+[load] etl_fact_orders now holds 2179 rows
+[reconcile] etl_payment_reconciliation:
+  payment_for_quarantined_order     206  ₹158,276.73
+  delivered_payment_failed           42  ₹25,722.25
+  delivered_no_payment               27  ₹16,438.30
+  amount_mismatch                    12  ₹585.00
+  payment_without_order               8  ₹4,580.57
+  returned_not_refunded               1  ₹812.00
+[report] net revenue by zone: [('East', 273415.95), ('West', 270878.6), ('South', 226467.3), ('North', 215968.05), ('Unassigned', 73818.05)]
+[report] category margin:
+   ('Staples', 246178.95, 183980.54, 62198.41, 25.3)
+   ('Personal Care', 199390.5, 155163.73, 44226.77, 22.2)
+   ('Household', 198202.35, 147354.26, 50848.09, 25.7)
+   ('Dairy & Bakery', 167733.65, 123318.19, 44415.46, 26.5)
+   ('Snacks & Beverages', 161761.95, 124069.0, 37692.95, 23.3)
+   ('Fruits & Vegetables', 87280.55, 66371.09, 20909.46, 24.0)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:47.594314: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'rows_extracted': 5212, 'rows_quarantined': 280, 'rows_loaded': 2179}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[raw] orders.csv: 2412 rows in file, 0 appended (already loaded); raw_orders now 2412 rows
+[raw] payments.csv: 2228 rows in file, 0 appended (already loaded); raw_payments now 2228 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[stage] stg_orders: 2412 rows, 233 FAIL
+[merge] no increment file loaded yet
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 29 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 273415.95), ('West', 270878.6), ('South', 226467.3), ('North', 215968.05), ('Unassigned', 73818.05)]
+[marts] reconciliation: [('payment_for_quarantined_order', 206, 158276.73), ('delivered_payment_failed', 42, 25722.25), ('delivered_no_payment', 27, 16438.3), ('amount_mismatch', 12, 585.0), ('payment_without_order', 8, 4580.57), ('returned_not_refunded', 1, 812.0)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:47.945358: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'rows_quarantined_masters_orders': 251, 'rows_quarantined_increment': 0, 'rows_extracted': 5212, 'rows_quarantined': 280, 'rows_loaded': 2179, 'report_done': True}
+  -> ETL success, ELT success
+  counts: {'etl_fact_orders': 2179, 'etl_returned': 66, 'etl_revenue': 1060547.95, 'raw_orders': 2412, 'stg_orders_pass': 2179, 'elt_returned': 66, 'elt_revenue': 1060547.95}
+
+
+######## 3b. Incremental load: add orders_2026-10-01_increment.csv ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 2412 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_48.583480.csv
+[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_48.583480.csv
+[validate] 5372 rows in, 295 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Uniqueness   orders.order_id_unique: 12/2412
+  Critical Completeness orders.customer_id_not_null: 18/2412
+  Critical Consistency  orders.customer_id_in_master: 18/2412
+  Critical Consistency  orders.product_id_in_master: 135/2412
+  Critical Consistency  orders.store_id_in_master: 5/2412
+  Critical Completeness orders.order_ts_not_null: 2/2412
+  Critical Validity     orders.order_ts_valid_timestamp: 4/2412
+  Critical Timeliness   orders.order_ts_not_future: 7/2412
+  Critical Accuracy     orders.quantity_positive: 10/2412
+  Critical Validity     orders.discount_pct_0_to_100: 3/2412
+  Critical Accuracy     orders.order_amount_matches_formula: 18/2412
+  Critical Validity     orders.order_status_allowed: 3/2412
+  Critical Completeness orders.delivered_has_delivery_minutes: 8/2412
+  Critical Accuracy     orders.delivery_minutes_below_120: 6/2412
+  Warning  Consistency  orders.payment_mode_standard_format: 10/2412
+  Warning  Consistency  orders.order_status_upper_case: 5/2412
+  Warning  Accuracy     orders.delivery_minutes_8_to_35: 6/2412
+  Critical Consistency  orders_2026-10-01_increment.customer_id_in_master: 1/160
+  Critical Consistency  orders_2026-10-01_increment.product_id_in_master: 14/160
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 8/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [2179, 145]
+[load] upserted 2179 rows from orders.csv
+[load] upserted 145 rows from orders_2026-10-01_increment.csv
+[load] etl_fact_orders now holds 2315 rows
+[reconcile] etl_payment_reconciliation:
+  payment_for_quarantined_order     206  ₹158,276.73
+  payment_not_in_file_yet           136  ₹72,191.20
+  delivered_payment_failed           42  ₹25,722.25
+  delivered_no_payment               27  ₹16,438.30
+  amount_mismatch                    12  ₹585.00
+  returned_not_refunded              10  ₹812.00
+  payment_without_order               8  ₹4,580.57
+[report] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 229879.45), ('Unassigned', 76474.45)]
+[report] category margin:
+   ('Staples', 264456.9, 198021.62, 66435.28, 25.1)
+   ('Household', 210607.95, 156439.04, 54168.91, 25.7)
+   ('Personal Care', 208774.7, 162065.13, 46709.57, 22.4)
+   ('Dairy & Bakery', 177404.85, 130204.03, 47200.82, 26.6)
+   ('Snacks & Beverages', 174863.6, 133465.47, 41398.13, 23.7)
+   ('Fruits & Vegetables', 92968.45, 70950.23, 22018.22, 23.7)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:48.583480: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_extracted': 5372, 'rows_quarantined': 295, 'rows_loaded': 2324}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[raw] orders.csv: 2412 rows in file, 0 appended (already loaded); raw_orders now 2412 rows
+[raw] payments.csv: 2228 rows in file, 0 appended (already loaded); raw_payments now 2228 rows
+[raw] orders_2026-10-01_increment.csv: 160 rows in file, 160 appended (new content); raw_orders now 2572 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[stage] stg_orders: 2412 rows, 233 FAIL
+[sql] 06_stg_orders_increment.sql
+[stage] stg_orders_increment: 160 rows, 15 FAIL
+[sql] 07_merge_increment.sql
+[merge] stg_orders: 150 inserted, 9 updated, 15 increment rows FAIL
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 29 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 229879.45), ('Unassigned', 76474.45)]
+[marts] reconciliation: [('payment_for_quarantined_order', 206, 158276.73), ('payment_not_in_file_yet', 136, 72191.2), ('delivered_payment_failed', 42, 25722.25), ('delivered_no_payment', 27, 16438.3), ('amount_mismatch', 12, 585.0), ('returned_not_refunded', 10, 812.0), ('payment_without_order', 8, 4580.57)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:48.890306: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_quarantined_masters_orders': 251, 'rows_quarantined_increment': 15, 'rows_extracted': 5372, 'rows_quarantined': 295, 'rows_loaded': 2315, 'report_done': True}
+  -> ETL success, ELT success
+  counts: {'etl_fact_orders': 2315, 'etl_returned': 75, 'etl_revenue': 1129076.45, 'raw_orders': 2572, 'stg_orders_pass': 2315, 'elt_returned': 75, 'elt_revenue': 1129076.45}
+  change: {'etl_fact_orders': 136, 'etl_returned': 9, 'etl_revenue': 68528.5, 'raw_orders': 160, 'stg_orders_pass': 136, 'elt_returned': 9, 'elt_revenue': 68528.5}
+
+
+######## 5. New bad data: 5 bad rows appended to orders.csv ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 2417 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 238 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_49.606130.csv
+[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_49.606130.csv
+[validate] 5377 rows in, 300 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Uniqueness   orders.order_id_unique: 12/2417
+  Critical Completeness orders.customer_id_not_null: 19/2417
+  Critical Consistency  orders.customer_id_in_master: 18/2417
+  Critical Consistency  orders.product_id_in_master: 135/2417
+  Critical Consistency  orders.store_id_in_master: 6/2417
+  Critical Completeness orders.order_ts_not_null: 2/2417
+  Critical Validity     orders.order_ts_valid_timestamp: 4/2417
+  Critical Timeliness   orders.order_ts_not_future: 8/2417
+  Critical Accuracy     orders.quantity_positive: 11/2417
+  Critical Validity     orders.discount_pct_0_to_100: 3/2417
+  Critical Accuracy     orders.order_amount_matches_formula: 19/2417
+  Critical Validity     orders.order_status_allowed: 4/2417
+  Critical Completeness orders.delivered_has_delivery_minutes: 8/2417
+  Critical Accuracy     orders.delivery_minutes_below_120: 6/2417
+  Warning  Consistency  orders.payment_mode_standard_format: 10/2417
+  Warning  Consistency  orders.order_status_upper_case: 5/2417
+  Warning  Accuracy     orders.delivery_minutes_8_to_35: 6/2417
+  Critical Consistency  orders_2026-10-01_increment.customer_id_in_master: 1/160
+  Critical Consistency  orders_2026-10-01_increment.product_id_in_master: 14/160
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 8/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [2179, 145]
+[load] upserted 2179 rows from orders.csv
+[load] upserted 145 rows from orders_2026-10-01_increment.csv
+[load] etl_fact_orders now holds 2315 rows
+[reconcile] etl_payment_reconciliation:
+  payment_for_quarantined_order     206  ₹158,276.73
+  payment_not_in_file_yet           136  ₹72,191.20
+  delivered_payment_failed           42  ₹25,722.25
+  delivered_no_payment               27  ₹16,438.30
+  amount_mismatch                    12  ₹585.00
+  returned_not_refunded              10  ₹812.00
+  payment_without_order               8  ₹4,580.57
+[report] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 229879.45), ('Unassigned', 76474.45)]
+[report] category margin:
+   ('Staples', 264456.9, 198021.62, 66435.28, 25.1)
+   ('Household', 210607.95, 156439.04, 54168.91, 25.7)
+   ('Personal Care', 208774.7, 162065.13, 46709.57, 22.4)
+   ('Dairy & Bakery', 177404.85, 130204.03, 47200.82, 26.6)
+   ('Snacks & Beverages', 174863.6, 133465.47, 41398.13, 23.7)
+   ('Fruits & Vegetables', 92968.45, 70950.23, 22018.22, 23.7)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:49.606130: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2417, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_extracted': 5377, 'rows_quarantined': 300, 'rows_loaded': 2324}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[raw] orders.csv: 2417 rows in file, 2417 appended (new content); raw_orders now 4989 rows
+[raw] payments.csv: 2228 rows in file, 0 appended (already loaded); raw_payments now 2228 rows
+[raw] orders_2026-10-01_increment.csv: 160 rows in file, 0 appended (already loaded); raw_orders now 4989 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[stage] stg_orders: 2417 rows, 238 FAIL
+[sql] 06_stg_orders_increment.sql
+[stage] stg_orders_increment: 160 rows, 15 FAIL
+[sql] 07_merge_increment.sql
+[merge] stg_orders: 150 inserted, 9 updated, 15 increment rows FAIL
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 29 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 229879.45), ('Unassigned', 76474.45)]
+[marts] reconciliation: [('payment_for_quarantined_order', 206, 158276.73), ('payment_not_in_file_yet', 136, 72191.2), ('delivered_payment_failed', 42, 25722.25), ('delivered_no_payment', 27, 16438.3), ('amount_mismatch', 12, 585.0), ('returned_not_refunded', 10, 812.0), ('payment_without_order', 8, 4580.57)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:49.935288: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2417, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_quarantined_masters_orders': 256, 'rows_quarantined_increment': 15, 'rows_extracted': 5377, 'rows_quarantined': 300, 'rows_loaded': 2315, 'report_done': True}
+  -> ETL success, ELT success
+  ETL quarantine rows for the 5 new orders:
+order_id                                  failure_reason
+ORD90001                            customer_id_not_null
+ORD90002 quantity_positive; order_amount_matches_formula
+ORD90003                              store_id_in_master
+ORD90004                            order_status_allowed
+ORD90005                             order_ts_not_future
+  ELT stg_orders rows:
+order_id dq_status                                  failure_reason
+ORD90001      FAIL                            customer_id_not_null
+ORD90002      FAIL quantity_positive; order_amount_matches_formula
+ORD90003      FAIL                              store_id_in_master
+ORD90004      FAIL                            order_status_allowed
+ORD90005      FAIL                             order_ts_not_future
+
+
+######## 6. Schema change: order_amount renamed to total ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[nammamart_etl_yourname] FAILED: ValueError: Schema drift in orders.csv: missing columns ['order_amount'], unexpected columns ['total']
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:50.618780: failed {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[nammamart_elt_yourname] FAILED: ValueError: Schema drift in orders.csv: missing columns ['order_amount'], unexpected columns ['total']
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:50.656615: failed {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405}
+  -> ETL failed, ELT failed
+
+
+######## 7. Volume anomaly: only 50 orders ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 50 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 1 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_50.857383.csv
+[quarantine] 2172 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_50.857383.csv
+[volume] WARNING orders: 50 rows vs 2417 on the previous run (>90% drop)
+[validate] 3010 rows in, 2206 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Completeness orders.customer_id_not_null: 1/50
+  Warning  Consistency  orders.payment_mode_standard_format: 1/50
+  Critical Consistency  orders_2026-10-01_increment.customer_id_in_master: 1/160
+  Critical Consistency  orders_2026-10-01_increment.product_id_in_master: 14/160
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 2172/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+  Warning  Completeness orders.row_count_vs_previous_run: 1/50
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [49, 145]
+[load] upserted 49 rows from orders.csv
+[load] upserted 145 rows from orders_2026-10-01_increment.csv
+[load] etl_fact_orders now holds 193 rows
+[reconcile] etl_payment_reconciliation:
+  payment_without_order            2058  ₹1,152,828.45
+  payment_not_in_file_yet           136  ₹72,191.20
+  returned_not_refunded               9  ₹0.00
+  payment_for_quarantined_order       2  ₹755.00
+  amount_mismatch                     1  ₹25.00
+[report] net revenue by zone: [('East', 29479.7), ('West', 26770.8), ('South', 19377.75), ('North', 16799.15), ('Unassigned', 3245.4)]
+[report] category margin:
+   ('Household', 23077.9, 17235.08, 5842.82, 25.3)
+   ('Staples', 20656.2, 15987.56, 4668.64, 22.6)
+   ('Snacks & Beverages', 15592.05, 11274.99, 4317.06, 27.7)
+   ('Dairy & Bakery', 14318.4, 10090.86, 4227.54, 29.5)
+   ('Personal Care', 13664.5, 10162.49, 3502.01, 25.6)
+   ('Fruits & Vegetables', 8363.75, 6471.45, 1892.3, 22.6)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:50.857383: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 50, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_extracted': 3010, 'rows_quarantined': 2206, 'rows_loaded': 194}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[raw] orders.csv: 50 rows in file, 50 appended (new content); raw_orders now 5039 rows
+[raw] payments.csv: 2228 rows in file, 0 appended (already loaded); raw_payments now 2228 rows
+[raw] orders_2026-10-01_increment.csv: 160 rows in file, 0 appended (already loaded); raw_orders now 5039 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[volume] WARNING orders: 50 rows vs 2417 on the previous run (>90% drop)
+[stage] stg_orders: 50 rows, 1 FAIL
+[sql] 06_stg_orders_increment.sql
+[stage] stg_orders_increment: 160 rows, 15 FAIL
+[sql] 07_merge_increment.sql
+[merge] stg_orders: 159 inserted, 1 updated, 15 increment rows FAIL
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 2172 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 29479.7), ('West', 26770.8), ('South', 19377.75), ('North', 16799.15), ('Unassigned', 3245.4)]
+[marts] reconciliation: [('payment_without_order', 2058, 1152828.45), ('payment_not_in_file_yet', 136, 72191.2), ('returned_not_refunded', 9, 0.0), ('payment_for_quarantined_order', 2, 755.0), ('amount_mismatch', 1, 25.0)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:51.174842: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 50, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_quarantined_masters_orders': 19, 'rows_quarantined_increment': 15, 'rows_extracted': 3010, 'rows_quarantined': 2206, 'rows_loaded': 193, 'report_done': True}
+  -> ETL success, ELT success
+  volume checks: [('nammamart_elt_yourname', 'orders.row_count_vs_previous_run', 'Warning', 1, 'WARN'), ('nammamart_etl_yourname', 'orders.row_count_vs_previous_run', 'Warning', 1, 'WARN')]
+
+
+######## 8. Distribution drift: unit_price x100 for store S05 ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 2412 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 366 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_51.801323.csv
+[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_51.801323.csv
+[validate] 5372 rows in, 428 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Uniqueness   orders.order_id_unique: 12/2412
+  Critical Completeness orders.customer_id_not_null: 18/2412
+  Critical Consistency  orders.customer_id_in_master: 18/2412
+  Critical Consistency  orders.product_id_in_master: 135/2412
+  Critical Consistency  orders.store_id_in_master: 5/2412
+  Critical Completeness orders.order_ts_not_null: 2/2412
+  Critical Validity     orders.order_ts_valid_timestamp: 4/2412
+  Critical Timeliness   orders.order_ts_not_future: 7/2412
+  Critical Accuracy     orders.quantity_positive: 10/2412
+  Critical Validity     orders.discount_pct_0_to_100: 3/2412
+  Critical Accuracy     orders.order_amount_matches_formula: 162/2412
+  Critical Validity     orders.order_status_allowed: 3/2412
+  Critical Completeness orders.delivered_has_delivery_minutes: 8/2412
+  Critical Accuracy     orders.delivery_minutes_below_120: 6/2412
+  Warning  Consistency  orders.payment_mode_standard_format: 10/2412
+  Warning  Consistency  orders.order_status_upper_case: 5/2412
+  Warning  Accuracy     orders.delivery_minutes_8_to_35: 6/2412
+  Warning  Accuracy     orders.unit_price_equals_mrp: 138/2412
+  Critical Consistency  orders_2026-10-01_increment.customer_id_in_master: 1/160
+  Critical Consistency  orders_2026-10-01_increment.product_id_in_master: 14/160
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 8/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [2046, 145]
+[load] upserted 2046 rows from orders.csv
+[load] upserted 145 rows from orders_2026-10-01_increment.csv
+[load] etl_fact_orders now holds 2183 rows
+[reconcile] etl_payment_reconciliation:
+  payment_for_quarantined_order     327  ₹232,345.53
+  payment_not_in_file_yet           136  ₹72,191.20
+  delivered_payment_failed           41  ₹25,404.25
+  delivered_no_payment               26  ₹16,186.55
+  amount_mismatch                    11  ₹485.00
+  returned_not_refunded              10  ₹812.00
+  payment_without_order               8  ₹4,580.57
+[report] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('North', 229879.45), ('South', 165420.5), ('Unassigned', 76474.45)]
+[report] category margin:
+   ('Staples', 247928.85, 185523.42, 62405.43, 25.2)
+   ('Household', 194715.45, 144446.55, 50268.9, 25.8)
+   ('Personal Care', 194638.5, 150755.94, 43882.56, 22.5)
+   ('Dairy & Bakery', 168364.7, 123464.29, 44900.41, 26.7)
+   ('Snacks & Beverages', 159449.45, 121440.87, 38008.58, 23.8)
+   ('Fruits & Vegetables', 89240.95, 68025.0, 21215.95, 23.8)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:51.801323: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_extracted': 5372, 'rows_quarantined': 428, 'rows_loaded': 2191}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[raw] orders.csv: 2412 rows in file, 2412 appended (new content); raw_orders now 7451 rows
+[raw] payments.csv: 2228 rows in file, 0 appended (already loaded); raw_payments now 2228 rows
+[raw] orders_2026-10-01_increment.csv: 160 rows in file, 0 appended (already loaded); raw_orders now 7451 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[stage] stg_orders: 2412 rows, 366 FAIL
+[sql] 06_stg_orders_increment.sql
+[stage] stg_orders_increment: 160 rows, 15 FAIL
+[sql] 07_merge_increment.sql
+[merge] stg_orders: 150 inserted, 9 updated, 15 increment rows FAIL
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 29 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('North', 229879.45), ('South', 165420.5), ('Unassigned', 76474.45)]
+[marts] reconciliation: [('payment_for_quarantined_order', 327, 232345.53), ('payment_not_in_file_yet', 136, 72191.2), ('delivered_payment_failed', 41, 25404.25), ('delivered_no_payment', 26, 16186.55), ('amount_mismatch', 11, 485.0), ('returned_not_refunded', 10, 812.0), ('payment_without_order', 8, 4580.57)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:52.103724: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_quarantined_masters_orders': 384, 'rows_quarantined_increment': 15, 'rows_extracted': 5372, 'rows_quarantined': 428, 'rows_loaded': 2183, 'report_done': True}
+  -> ETL success, ELT success
+  checks that fired: [('nammamart_elt_yourname', 'orders.unit_price_equals_mrp', 'Warning', 138, 'WARN'), ('nammamart_etl_yourname', 'orders.unit_price_equals_mrp', 'Warning', 138, 'WARN'), ('nammamart_elt_yourname', 'orders.order_amount_matches_formula', 'Critical', 162, 'FAIL'), ('nammamart_etl_yourname', 'orders.order_amount_matches_formula', 'Critical', 162, 'FAIL')]
+  counts: {'etl_fact_orders': 2183, 'etl_returned': 72, 'etl_revenue': 1054337.9, 'raw_orders': 7451, 'stg_orders_pass': 2183, 'elt_returned': 72, 'elt_revenue': 1054337.9}
+
+
+######## 9. Freshness: every order_ts shifted 30 days back ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 2412 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_52.816710.csv
+[freshness] WARNING orders: latest order_ts 2026-09-21 10:15:00 is more than 1 day before 2026-10-01
+[quarantine] 231 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_52.816710.csv
+[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_52.816710.csv
+[validate] 5372 rows in, 293 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Uniqueness   orders.order_id_unique: 12/2412
+  Critical Completeness orders.customer_id_not_null: 18/2412
+  Critical Consistency  orders.customer_id_in_master: 18/2412
+  Critical Consistency  orders.product_id_in_master: 135/2412
+  Critical Consistency  orders.store_id_in_master: 5/2412
+  Critical Completeness orders.order_ts_not_null: 2/2412
+  Critical Validity     orders.order_ts_valid_timestamp: 4/2412
+  Critical Timeliness   orders.order_ts_not_future: 5/2412
+  Critical Accuracy     orders.quantity_positive: 10/2412
+  Critical Validity     orders.discount_pct_0_to_100: 3/2412
+  Critical Accuracy     orders.order_amount_matches_formula: 18/2412
+  Critical Validity     orders.order_status_allowed: 3/2412
+  Critical Completeness orders.delivered_has_delivery_minutes: 8/2412
+  Critical Accuracy     orders.delivery_minutes_below_120: 6/2412
+  Warning  Consistency  orders.payment_mode_standard_format: 10/2412
+  Warning  Consistency  orders.order_status_upper_case: 5/2412
+  Warning  Accuracy     orders.delivery_minutes_8_to_35: 6/2412
+  Warning  Timeliness   orders.latest_order_within_1_day: 1/1
+  Critical Consistency  orders_2026-10-01_increment.customer_id_in_master: 1/160
+  Critical Consistency  orders_2026-10-01_increment.product_id_in_master: 14/160
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 8/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [2181, 145]
+[load] upserted 2181 rows from orders.csv
+[load] upserted 145 rows from orders_2026-10-01_increment.csv
+[load] etl_fact_orders now holds 2317 rows
+[reconcile] etl_payment_reconciliation:
+  payment_for_quarantined_order     204  ₹157,096.93
+  payment_not_in_file_yet           136  ₹72,191.20
+  delivered_payment_failed           42  ₹25,722.25
+  delivered_no_payment               29  ₹17,618.10
+  amount_mismatch                    12  ₹585.00
+  returned_not_refunded              10  ₹812.00
+  payment_without_order               8  ₹4,580.57
+[report] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 230866.3), ('Unassigned', 76667.4)]
+[report] category margin:
+   ('Staples', 264456.9, 198021.62, 66435.28, 25.1)
+   ('Household', 210607.95, 156439.04, 54168.91, 25.7)
+   ('Personal Care', 208774.7, 162065.13, 46709.57, 22.4)
+   ('Dairy & Bakery', 178391.7, 131077.75, 47313.95, 26.5)
+   ('Snacks & Beverages', 175056.55, 133603.38, 41453.17, 23.7)
+   ('Fruits & Vegetables', 92968.45, 70950.23, 22018.22, 23.7)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:52.816710: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_extracted': 5372, 'rows_quarantined': 293, 'rows_loaded': 2326}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[raw] orders.csv: 2412 rows in file, 2412 appended (new content); raw_orders now 9863 rows
+[raw] payments.csv: 2228 rows in file, 0 appended (already loaded); raw_payments now 2228 rows
+[raw] orders_2026-10-01_increment.csv: 160 rows in file, 0 appended (already loaded); raw_orders now 9863 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[stage] stg_orders: 2412 rows, 231 FAIL
+[freshness] WARNING orders: latest order_ts 2026-09-21 10:15:00 is more than 1 day before 2026-10-01
+[sql] 06_stg_orders_increment.sql
+[stage] stg_orders_increment: 160 rows, 15 FAIL
+[sql] 07_merge_increment.sql
+[merge] stg_orders: 150 inserted, 9 updated, 15 increment rows FAIL
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 29 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 230866.3), ('Unassigned', 76667.4)]
+[marts] reconciliation: [('payment_for_quarantined_order', 204, 157096.93), ('payment_not_in_file_yet', 136, 72191.2), ('delivered_payment_failed', 42, 25722.25), ('delivered_no_payment', 29, 17618.1), ('amount_mismatch', 12, 585.0), ('returned_not_refunded', 10, 812.0), ('payment_without_order', 8, 4580.57)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:53.148490: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_quarantined_masters_orders': 249, 'rows_quarantined_increment': 15, 'rows_extracted': 5372, 'rows_quarantined': 293, 'rows_loaded': 2317, 'report_done': True}
+  -> ETL success, ELT success
+  freshness checks: [('nammamart_elt_yourname', 'orders.latest_order_within_1_day', 'Warning', 1, 'WARN'), ('nammamart_etl_yourname', 'orders.latest_order_within_1_day', 'Warning', 1, 'WARN')]
+
+
+######## Back to the original files ########
+[extract] stores.csv: 15 rows, 8 columns
+[extract] products.csv: 152 rows, 10 columns
+[extract] customers.csv: 405 rows, 10 columns
+[extract] orders.csv: 2412 rows, 13 columns
+[extract] payments.csv: 2228 rows, 7 columns
+[extract] orders_2026-10-01_increment.csv: 160 rows, 13 columns
+[quarantine] 10 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/products_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 8 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/customers_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 233 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 15 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/orders_2026-10-01_increment_failed_local__2026-10-22T11_35_53.783513.csv
+[quarantine] 29 rows -> /Users/admin/claude/FDE/include/quarantine/yourname/payments_failed_local__2026-10-22T11_35_53.783513.csv
+[validate] 5372 rows in, 295 quarantined. Checks with failures:
+  Warning  Completeness stores.zone_not_null: 1/15
+  Warning  Accuracy     stores.capacity_positive: 1/15
+  Critical Uniqueness   products.product_id_unique: 2/152
+  Critical Completeness products.category_not_null: 3/152
+  Critical Accuracy     products.mrp_positive: 1/152
+  Critical Accuracy     products.cost_price_le_mrp: 5/152
+  Critical Uniqueness   customers.customer_id_unique: 5/405
+  Critical Timeliness   customers.signup_date_not_future: 3/405
+  Warning  Completeness customers.email_not_null: 4/405
+  Warning  Validity     customers.email_format: 8/405
+  Warning  Validity     customers.phone_10_digits: 7/405
+  Warning  Validity     customers.pincode_6_digits: 5/405
+  Warning  Completeness customers.city_not_null: 6/405
+  Warning  Consistency  customers.loyalty_tier_casing: 8/405
+  Critical Uniqueness   orders.order_id_unique: 12/2412
+  Critical Completeness orders.customer_id_not_null: 18/2412
+  Critical Consistency  orders.customer_id_in_master: 18/2412
+  Critical Consistency  orders.product_id_in_master: 135/2412
+  Critical Consistency  orders.store_id_in_master: 5/2412
+  Critical Completeness orders.order_ts_not_null: 2/2412
+  Critical Validity     orders.order_ts_valid_timestamp: 4/2412
+  Critical Timeliness   orders.order_ts_not_future: 7/2412
+  Critical Accuracy     orders.quantity_positive: 10/2412
+  Critical Validity     orders.discount_pct_0_to_100: 3/2412
+  Critical Accuracy     orders.order_amount_matches_formula: 18/2412
+  Critical Validity     orders.order_status_allowed: 3/2412
+  Critical Completeness orders.delivered_has_delivery_minutes: 8/2412
+  Critical Accuracy     orders.delivery_minutes_below_120: 6/2412
+  Warning  Consistency  orders.payment_mode_standard_format: 10/2412
+  Warning  Consistency  orders.order_status_upper_case: 5/2412
+  Warning  Accuracy     orders.delivery_minutes_8_to_35: 6/2412
+  Critical Consistency  orders_2026-10-01_increment.customer_id_in_master: 1/160
+  Critical Consistency  orders_2026-10-01_increment.product_id_in_master: 14/160
+  Critical Uniqueness   payments.payment_id_unique: 4/2228
+  Critical Consistency  payments.order_id_in_orders: 8/2228
+  Critical Timeliness   payments.payment_ts_not_future: 7/2228
+  Critical Accuracy     payments.success_amount_positive: 10/2228
+  Warning  Consistency  payments.payment_mode_standard_format: 10/2228
+[transform] dims: 15 stores, 142 products, 397 customers; fact batches: [2179, 145]
+[load] upserted 2179 rows from orders.csv
+[load] upserted 145 rows from orders_2026-10-01_increment.csv
+[load] etl_fact_orders now holds 2315 rows
+[reconcile] etl_payment_reconciliation:
+  payment_for_quarantined_order     206  ₹158,276.73
+  payment_not_in_file_yet           136  ₹72,191.20
+  delivered_payment_failed           42  ₹25,722.25
+  delivered_no_payment               27  ₹16,438.30
+  amount_mismatch                    12  ₹585.00
+  returned_not_refunded              10  ₹812.00
+  payment_without_order               8  ₹4,580.57
+[report] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 229879.45), ('Unassigned', 76474.45)]
+[report] category margin:
+   ('Staples', 264456.9, 198021.62, 66435.28, 25.1)
+   ('Household', 210607.95, 156439.04, 54168.91, 25.7)
+   ('Personal Care', 208774.7, 162065.13, 46709.57, 22.4)
+   ('Dairy & Bakery', 177404.85, 130204.03, 47200.82, 26.6)
+   ('Snacks & Beverages', 174863.6, 133465.47, 41398.13, 23.7)
+   ('Fruits & Vegetables', 92968.45, 70950.23, 22018.22, 23.7)
+[audit] nammamart_etl_yourname local__2026-10-22T11:35:53.783513: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_extracted': 5372, 'rows_quarantined': 295, 'rows_loaded': 2324}
+[raw] stores.csv: 15 rows in file, 0 appended (already loaded); raw_stores now 15 rows
+[raw] products.csv: 152 rows in file, 0 appended (already loaded); raw_products now 152 rows
+[raw] customers.csv: 405 rows in file, 0 appended (already loaded); raw_customers now 405 rows
+[raw] orders.csv: 2412 rows in file, 0 appended (already loaded); raw_orders now 9863 rows
+[raw] payments.csv: 2228 rows in file, 0 appended (already loaded); raw_payments now 2228 rows
+[raw] orders_2026-10-01_increment.csv: 160 rows in file, 0 appended (already loaded); raw_orders now 9863 rows
+[sql] 00_macros.sql
+[sql] 01_stg_stores.sql
+[stage] stg_stores: 15 rows, 0 FAIL
+[sql] 02_stg_products.sql
+[stage] stg_products: 152 rows, 10 FAIL
+[sql] 03_stg_customers.sql
+[stage] stg_customers: 405 rows, 8 FAIL
+[sql] 04_orders_checked_macro.sql
+[sql] 05_stg_orders.sql
+[stage] stg_orders: 2412 rows, 233 FAIL
+[sql] 06_stg_orders_increment.sql
+[stage] stg_orders_increment: 160 rows, 15 FAIL
+[sql] 07_merge_increment.sql
+[merge] stg_orders: 150 inserted, 9 updated, 15 increment rows FAIL
+[sql] 08_stg_payments.sql
+[stage] stg_payments: 2228 rows, 29 FAIL
+[sql] 10_mart_daily_store_kpis.sql
+[sql] 11_mart_category_margin.sql
+[sql] 12_mart_delivery_sla.sql
+[sql] 13_mart_payment_reconciliation.sql
+[sql] 14_mart_top_customers.sql
+[sql] 15_mart_payment_mode_revenue.sql
+[marts] net revenue by zone: [('East', 293090.4), ('West', 289473.1), ('South', 240159.05), ('North', 229879.45), ('Unassigned', 76474.45)]
+[marts] reconciliation: [('payment_for_quarantined_order', 206, 158276.73), ('payment_not_in_file_yet', 136, 72191.2), ('delivered_payment_failed', 42, 25722.25), ('delivered_no_payment', 27, 16438.3), ('amount_mismatch', 12, 585.0), ('returned_not_refunded', 10, 812.0), ('payment_without_order', 8, 4580.57)]
+[audit] nammamart_elt_yourname local__2026-10-22T11:35:54.080859: success {'extracted_stores': 15, 'extracted_products': 152, 'extracted_customers': 405, 'extracted_orders': 2412, 'extracted_payments': 2228, 'extracted_increment_0': 160, 'rows_quarantined_masters_orders': 251, 'rows_quarantined_increment': 15, 'rows_extracted': 5372, 'rows_quarantined': 295, 'rows_loaded': 2315, 'report_done': True}
+  -> ETL success, ELT success
+  counts: {'etl_fact_orders': 2315, 'etl_returned': 75, 'etl_revenue': 1129076.45, 'raw_orders': 9863, 'stg_orders_pass': 2315, 'elt_returned': 75, 'elt_revenue': 1129076.45}

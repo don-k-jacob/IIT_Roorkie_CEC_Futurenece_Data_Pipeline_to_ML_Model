@@ -13,3 +13,8 @@ airflow.db
 .astro/*.local.yml
 .astro/*.local.yaml
 test_api.py 
+
+# NammaMart assignment: warehouse holds raw (unmasked) customer data; never commit it
+include/warehouse_*.duckdb
+include/warehouse_*.duckdb.wal
+include/tmp/
